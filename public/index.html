@@ -1,0 +1,271 @@
+
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>LIRKIS G-CVE platform</title>
+    <meta name="description" content="Basic Example — Networked-Aframe">
+
+     <!--AFRAME release + extras with dynamic functionality-->
+    <script src="https://aframe.io/releases/0.9.0/aframe.min.js"></script>  
+    <script src="https://cdn.rawgit.com/donmccurdy/aframe-extras/v5.0.0/dist/aframe-extras.js"></script>
+        
+    <script src="https://unpkg.com/networked-aframe@^0.6.1/dist/networked-aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.4.5/socket.io.min.js"></script>   
+    <script src="easyrtc/easyrtc.js"></script>
+    
+    <script src="https://unpkg.com/aframe-randomizer-components@^3.0.1/dist/aframe-randomizer-components.min.js"></script>
+    <script src="https://rawgit.com/urish/aframe-camera-events/master/index.js"></script>    
+    <script src="/js/spawn-in-circle.component.js"></script>
+    <script src="/js/getThePosition.js"></script>
+    <script src="/js/userIDplaced.js"></script>
+    <script src="/js/body_rot.js"></script>
+    <script src="/js/transparent_material.js"></script>
+    <!--<script src="/js/gaze_movement.js"></script> -->
+    <script src="/js/gaze_interaction.js"></script>  
+    
+  </head>
+  
+  <body>
+    
+<!--- A-FRAME SCENE ----------------------------------------------------------------------------------------------------->
+    <a-scene networked-scene="
+      room: basic;
+      debug: true;
+      transport: websocket;                           
+    ">
+      <a-assets timeout="15000">
+<!-- PATHs of attached models -  stored on github ------------------------------------------------------------------------>
+         <a-asset-item id="hmd-obj" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/avatar/avatar.obj"></a-asset-item>
+        <a-asset-item id="hmd-mtl" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/avatar/avatar.mtl"></a-asset-item>
+       
+        <a-asset-item id="body-obj" src="https://cdn.glitch.com/ae1a6582-b74d-4c82-bb71-faf627e4789b%2Fbodys.obj?v=1560985819906"></a-asset-item>
+        <a-asset-item id="body-mtl" src=""></a-asset-item>
+        
+        <a-asset-item id="hand-obj" src="https://cdn.glitch.com/ae1a6582-b74d-4c82-bb71-faf627e4789b%2Fhand.obj?v=1560986411419"></a-asset-item>
+        <a-asset-item id="hand-mtl" src=""></a-asset-item>
+        
+        <a-asset-item id="environment-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/expohall.obj"></a-asset-item>
+        <a-asset-item id="environment-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/expohall.mtl"></a-asset-item>
+        
+        <a-asset-item id="cave-obj" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/lirkiscave/lirkiscavemodel.obj"></a-asset-item>
+        <a-asset-item id="cave-mtl" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/lirkiscave/lirkiscavemodel.mtl"></a-asset-item>
+        
+        <a-asset-item id="vacka-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/vacka.obj"></a-asset-item>
+        <a-asset-item id="vacka-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/vacka.mtl"></a-asset-item>
+        
+        <a-asset-item id="ventil-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/ventily.obj"></a-asset-item>
+        <a-asset-item id="ventil-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/ventily.mtl"></a-asset-item>
+        
+        <a-asset-item id="piest-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/piesty.obj"></a-asset-item>
+        <a-asset-item id="piest-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/piesty.mtl"></a-asset-item>
+        
+        <a-asset-item id="ojnica-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/ojnice.obj"></a-asset-item>
+        <a-asset-item id="ojnica-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/ojnice.mtl"></a-asset-item>
+        
+        <a-asset-item id="kluka-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/kluka.obj"></a-asset-item>
+        <a-asset-item id="kluka-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/kluka.mtl"></a-asset-item>
+        
+        <a-asset-item id="hriadel-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/hriadel.obj"></a-asset-item>
+        <a-asset-item id="hriadel-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/expoHALL/engine/hriadel.mtl"></a-asset-item>
+        
+        <a-asset-item id="car-obj" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/sonata/stcar.obj"></a-asset-item>
+        <a-asset-item id="car-mtl" src="https://raw.githubusercontent.com/mayorian/3dmodels/master/sonata/stcar.mtl"></a-asset-item>
+        
+        <!--<a-asset-item id="van-obj" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/naprava/naprava.obj"></a-asset-item>
+        <a-asset-item id="van-mtl" src="https://raw.githubusercontent.com/mayorian/glitchproject/master/naprava/naprava.mtl"></a-asset-item> -->
+        
+        <img id="sky4" src="https://cdn.glitch.com/71be7415-c9c7-4e9a-82c8-e228699322ea%2Ftexts.jpg?v=1570837351823" crossorigin="anonymous" />
+        <img id="floor" src="https://cdn.glitch.com/976ec309-5c22-4c52-93dd-892d5184766f%2Ffloor.jpg?v=1570193592501" crossorigin="anonymous" />
+         <img id="enterbtt" src="https://cdn.glitch.com/976ec309-5c22-4c52-93dd-892d5184766f%2Fplay.png?v=1570197265803" crossorigin="anonymous" />
+        <!--<img id="guiarrows" src="https://cdn.glitch.com/976ec309-5c22-4c52-93dd-892d5184766f%2Fnawgui.png?v=1570310226107" crossorigin="anonymous" />-->
+      
+        
+        
+<!-- Templates - objects utilized in AVATAR MODEL construction ------------------------------------------------------------------------>
+        
+   <template id="avatar-template">
+              <a-entity class="avatar">
+                       <a-obj-model src="#hmd-obj" mtl="#hmd-mtl" scale="0.5 0.5 0.5">
+                             <!--  <a-cylinder width="0.1" height="2.7" position="0 0 -3.0" rotation="90 0 0" scale="0.005 2 0.005" opacity="0.8" color="white" emissive="white">
+                              </a-cylinder> -->
+                        </a-obj-model>
+                        <a-sphere class="head" color="#A0A0B2" scale="0.2 0.2 0.2" position="0 -0.08 0" random-color opacity="0.8" collider-check></a-sphere>
+                            <a-text class="idtext" rotation="0 180 0" position="0 0.3 0" color="cyan" align="center" scale="0.8 0.8 0.8" value="LIRKIS USER"></a-text>  
+                 <a-entity id="raycastter" raycaster="showLine: true; far: 500" line="color: white; opacity: 1" position="0 0 0 "></a-entity>
+              </a-entity>
+            </template>
+    
+   
+        
+        <template id="avatar-body">
+              <a-entity class="bodyavatar">                        
+                <a-obj-model src="#body-obj" mtl="#body-mtl" scale="0.05 0.04 0.05 " opacity="0.7">                          
+                </a-obj-model>   
+                
+              </a-entity>
+          </template>
+        
+        <template id="hololens-body">
+              <a-entity class="bodyavatar">                        
+                
+              </a-entity>
+          </template>
+        
+   
+        
+     <!-- <template id="avatar-bodyhands">
+              <a-entity class="bavatar">    
+                       <a-obj-model src="#body-obj" mtl="#body-mtl" position="-0.3 0.7 0" scale="0.015 0.015 0.015" opacity="0.7">   
+                        </a-obj-model>   
+                       <a-obj-model src="#body-obj" mtl="#body-mtl" position="0.3 0.7 0" scale="0.015 0.015 0.015" opacity="0.7">   
+                        </a-obj-model>   
+              </a-entity>
+          </template> -->
+        
+ 
+      </a-assets> 
+<!-- /END OF Templates ---------------------------------------------------------------------------------------------------->
+
+      
+<!--SHARED ENTITIES------------------------------------------------------------------------------------------------------>   
+     <a-entity id="fullbody"> 
+         <a-entity   
+                    id="rig"      
+                    networked="template:#avatar-body;attachTemplateToLocal:false;"              
+                    position = "-3 0 -3"
+                    rotation="0 70 0"
+                    movement-controls   
+                    gaze-interaction
+                                     
+           > 
+                  <a-entity
+                            id="playerhead"
+                            networked="template:#avatar-template;attachTemplateToLocal:false;"  
+                            camera 
+                            position="0 1.6 0"
+                            look-controls="pointerLockEnabled:false"                     
+                      >
+                        <!--SSTART OF CURSOR IMPLEMENTATION ------------------------------------------->
+                         <!--   <a-entity cursor="fuse: true; fuseTimeout: 500"
+                                      position="0 0 -1"
+                                      geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.02"
+                                      material="color: red; shader: flat">
+                            </a-entity> -->
+                    
+                         <!--END OF 3D CURSOR IMPLEMENTATION ------------------------------------------->
+                           <a-text class="idtext" visible="true" head-text ></a-text> 
+                           <a-sphere class="head" visible="true" random-color></a-sphere>
+                          
+                        <!--START OF TOOLTIP IMPLEMENTATION OBJECT ------------------------------------------------------>    
+                              <a-text id="tooltiptext" visible="true" value="-" position="0.0 0 -1" scale="0.3 0.3 1"></a-text>                          
+                        <!--END OF TOOLTIP IMPLEMENTATION OBJECT ------------------------------------------------------>
+                    </a-entity>
+
+                   <!--START OF GAZE  MOVEMENT ENTITIES IMPLEMENTATION ----------------------------------------------------
+                  <a-entity id="frontmove" material="transparent: true; src:#guiarrows" geometry="primitive: plane" 
+                        position="0 0.053 -1.500" rotation="-90 0 90">
+                  </a-entity>
+           
+                  <a-entity id="backmove"  material="transparent: true; src:#guiarrows" geometry="primitive: plane" 
+                        position="0 0.050 1.5" rotation="-90 0 -90">
+                  </a-entity>
+           
+                  <a-entity id="leftmove" material="transparent: true; src:#guiarrows" geometry="primitive: plane" 
+                        position="-1.5 0.05 0" rotation="-90 0 180">
+                  </a-entity>
+           
+                  <a-entity id="rightmove" material="transparent: true; src:#guiarrows" geometry="primitive: plane" 
+                        position="1.5 0.05 0" rotation="-90 0 0">
+                  </a-entity>
+
+                    <!--END OF GAZE  MOVEMENT ENTITIES IMPLEMENTATION ------------------------------------------------------>
+                   
+                 <!-- <a-entity 
+                               id="bodyvrhands"
+                               networked="template:#avatar-bodyhands;attachTemplateToLocal:true;"  
+                               set-rotation                      
+                               position="0 0 0"                       
+                               >
+                  </a-entity> -->
+        </a-entity>  
+    </a-entity>
+<!-- END OFSHARED ENTITIES------------------------------------------------------------------------------------------------------>   
+      <script>
+          NAF.schemas.add({
+        template: '#avatar-template',
+        components: [
+          'position',
+          'rotation',
+          {
+            selector: '.head',
+            component: 'material',
+            property: 'color'
+          },
+          {
+            selector: '.idtext',
+            component: 'text',
+            property: 'value'
+          },
+        ]
+      });
+  </script>
+
+<!-- ENVIRONMENT OBJECTs------------------------------------------------------------------------------------------------------>   
+    <!--<a-text value="LIRKIS G-CVE" lirkis-text-component position="-20 2.9 -4.77" rotation="0.000 90 0" color="#ffffff" 
+               align="center" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" scale="6 6 1" ></a-text> -->
+      
+       <a-text value="LIRKIS G-CVE" lirkis-text-component position="-4.868 3.208 0.119" rotation="0 180 0" color="#bba037" 
+               align="center" font="https://cdn.aframe.io/fonts/Exo2Bold.fnt" scale="6 6 1" ></a-text> 
+      
+      <a-curvedimage id="GCVE" src="https://cdn.glitch.com/976ec309-5c22-4c52-93dd-892d5184766f%2Fgcve.png?v=1570314215330" radius="4" theta-length="120" height="3" 
+                     rotation="0 300 0" scale="1.2 1.2 1.2" position="5.06 1.835 10"> 
+      </a-curvedimage> 
+      
+      <a-obj-model src="#environment-obj" mtl="#environment-mtl" scale="1 1 1" position="0 0 0" rotation="0 -90 0">
+      </a-obj-model> 
+      
+      <a-obj-model src="#car-obj" mtl="#car-mtl" shadow="receive: false; cast: false" position="3.978 0 -5.147" rotation="0 -60 0" scale="1.2 1.2 1.2"></a-obj-model>
+      
+      <a-entity id ="motor" position="1.270 0 2.06" rotation="0 90 0" scale="2 2 2">
+            <a-obj-model id="vacka" src="#vacka-obj" material="color: #828282" shadow="receive: false; cast: false" position="2.461 1.334 -5.689" 
+                         rotation="0 -33.901 0" scale="0.010 0.010 0.010">    
+            </a-obj-model>
+
+            <a-obj-model id="ventil" src="#ventil-obj" material="color: #235421" shadow="receive: false; cast: false" position="2.461 1.334 -5.689" 
+                         rotation="0 -33.901 0" scale="0.010 0.010 0.010">    
+            </a-obj-model>      
+
+            <a-obj-model id="ojnica" src="#ojnica-obj" material="color: #2d2d2d" shadow="receive: false; cast: false" position="2.461 1.334 -5.689" 
+                         rotation="0 -33.901 0" scale="0.010 0.010 0.010">          
+            </a-obj-model>
+
+            <a-obj-model class="collidable" id="piest" src="#piest-obj" material="color: #285893" shadow="receive: false; cast: false" position="2.461 1.334 -5.689" 
+                         rotation="0 -33.901 0" scale="0.010 0.010 0.010">
+            </a-obj-model>
+
+            <a-obj-model id="hriadel" src="#hriadel-obj" material="color: #8c854d" shadow="receive: false; cast: false" position="2.461 1.334 -5.689" 
+                         rotation="0 -33.901 0" scale="0.010 0.010 0.010"></a-obj-model>
+      </a-entity>
+      <!--<a-plane id="planeplate" color="#232323" height="10" width="8" position="0 0.043 0" rotation="-90 0 0"></a-plane>-->
+    
+     <a-entity light="color: #fff; intensity: 1; type: ambient;" visible="true"></a-entity>
+      
+     <a-entity light="type: point; castShadow:false; color:#c4bfa8; intensity:1; distance: 4; decay: 0"
+                    position="-5.682 1.308 -5.153"></a-entity>
+     <!-- <a-entity light="type: point; castShadow:false; color:#c4bfa8; intensity:1; distance: 42.090; decay: 0.730"
+                    position="3.813 2.680 -4.284"></a-entity> -->
+      
+      
+     <!--<a-sky src="blob:https://imgur.com/3f27fedd-8023-4345-ac3c-4a091dbbb6ae" rotation="0 -90 0"></a-sky>-->
+        <a-sky src="#sky4" rotation="0 -90 0"></a-sky> 
+   
+    </a-scene>
+
+<!-- SHARED OBJECTS PROPERTIES THROUGH NETWORKED AFRAME SCHEMES NAF-------------------------------------------------------------->       
+     <script>               
+               
+       //check this
+      console.log("Starting");     
+    </script>
+  </body>
+</html>
